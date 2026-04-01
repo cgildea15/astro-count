@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Counting Zoo Space Academy | Comparison</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none; /* Prevents text highlights during drag */
+        }
+        
+        body {
+            font-family: 'Lexend', sans-serif;
+            background-color: #0b1120; /* Deep Space Blue */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 10px;
+            color: #e2e8f0;
+            touch-action: manipulation;
+            overflow-x: hidden;
+        }
+
+        .space-header {
+            font-size: clamp(1.8rem, 6vw, 2.5rem);
+            margin-bottom: 5px;
+            display: flex;
+            gap: 15px;
+            text-shadow: 0 0 10px #60a5fa;
+        }
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.95);
+            color: #1a202c;
+            padding: 12px 20px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            text-align: center;
+            font-size: clamp(0.9rem, 3.5vw, 1.2rem);
+            width: 90%;
+            max-width: 700px;
+            border: 3px solid #60a5fa;
+            font-weight: 700;
+        }
+
+        /* Landscape Game Layout */
+        .comparison-cards-container {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison-cards-container {
+                flex-direction: column; /* Stack vertically on small phones */
+                height: auto;
+            }
+        }
+
+        .card-face {
+            flex: 1;
+            background: #ffffff;
+            border-radius: 25px;
+            border: 6px solid #60a5fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .card-face.drop-active {
+            border-color: #fbbf24; /* Golden Highlight when ready to drop star */
+            background-color: #fffbeb;
+        }
+
+        .group-label {
+            font-size: 1.5rem;
+            color: #1a5276;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .matching-area {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            background: #f8fafc;
+            border-radius: 15px;
+            border: 2px dashed #cbd5e1;
+            overflow: hidden;
+        }
+
+        .animal-dot {
+            font-size: 3rem;
+            position: absolute;
+            transition: transform 0.3s ease;
+            z-index: 10;
+        }
+
+        /* Drag-to-Target Star */
+        .source-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .draggable-star {
+            font-size: 4rem;
+            cursor: grab;
+            transition: transform 0.1s ease;
+            filter: drop-shadow(0 0 5px #fbbf24);
+        }
+        
+        .draggable-star:active {
+            cursor: grabbing;
+            transform: scale(1.1);
+        }
+
+        /* Comparison Feedback Scaffold */
+        .feedback-area {
+            background: rgba(255, 255, 255, 0.9);
+            color: #1a202c;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            border: 4px solid #f97316;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 15px;
+        }
+
+        /* Visual Scaffold styling for Less/Greater/Equal */
+        .scaffold {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .scaffold-symbol {
+            font-size: 1.8rem;
+            color: #f97316;
+        }
+
+        .btn {
+            margin-top: 15px;
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Lexend', sans-serif;
+            box-shadow: 0 4px 0 #1d4ed8;
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="space-header">
+        <span>🚀</span><span>🦁🛸</span><span>🌌</span>
+    </div>
+
+    <div class="instructions" id="inst">
+        Count the animals in Group A and Group B. Which is GREATER?
+    </div>
+
+    <div class="comparison-cards-container">
+        <div class="card-face drop-target" id="groupACard">
+            <div class="group-label">Group A</div>
+            <div class="matching-area" id="areaA"></div>
+        </div>
+
+        <div class="card-face drop-target" id="groupBCard">
+            <div class="group-label">Group B</div>
+            <div class="matching-area" id="areaB"></div>
+        </div>
+    </div>
+
+    <div class="source-box">
+        <p>Drag the matching star to the BIGGEST group:</p>
+        <div class="draggable-star" id="star" draggable="true">🌟</div>
+    </div>
+
+    <div class="feedback-area" id="feedback" style="display: none;">
+        </div>
+
+    <button class="btn" id="nextBtn" style="display: none;" onclick="initLevel()">Next Comparison</button>
+
+    <script>
+        const areaA = document.getElementById('areaA');
+        const areaB = document.getElementById('areaB');
+        const feedback = document.getElementById('feedback');
+        const nextBtn = document.getElementById('nextBtn');
+        const inst = document.getElementById('inst');
+        const star = document.getElementById('star');
+        const cardA = document.getElementById('groupACard');
+        const cardB = document.getElementById('groupBCard');
+
+        const zooAnimals = ['🦁', '🐯', '🐘', '🦛', '🐒'];
+        let countA = 0;
+        let countB = 0;
+
+        function initLevel() {
+            // Reset everything
+            areaA.innerHTML = '';
+            areaB.innerHTML = '';
+            feedback.innerHTML = '';
+            feedback.style.display = 'none';
+            nextBtn.style.display = 'none';
+            inst.innerText = "Count the animals in Group A and Group B. Which is GREATER?";
+            
+            // Re-enable dragging
+            star.style.opacity = '1';
+            star.draggable = true;
+
+            // NSO.1.4 standard asks for 0-20.
+            // We'll limit slightly to keep matching simple initially.
+            // Using different ranges/reusing randoms can make this more likely to show equalities.
+            countA = Math.floor(Math.random() * 12) + 2; // 2 to 13
+            countB = Math.floor(Math.random() * 12) + 2; // 2 to 13
+            // countB = countA; // UNCOMMENT TO FORCE EQUALITY TESTING
+
+            // Choose one animal per group to make matching clear
+            const animalA = zooAnimals[Math.floor(Math.random() * zooAnimals.length)];
+            const animalB = zooAnimals[Math.floor(Math.random() * zooAnimals.length)];
+
+            populateArea(areaA, countA, animalA);
+            populateArea(areaB, countB, animalB);
+        }
+
+        // Standard Clarification 1: Connection to matching
+        function populateArea(area, count, animalEmoji) {
+            // Logic for a messy but matchable scattered arrangement
+            const areaW = area.offsetWidth - 60;
+            const areaH = area.offsetHeight - 60;
+            const stepH = areaH / count;
+
+            for (let i = 0; i < count; i++) {
+                const animal = document.createElement('div');
+                animal.className = 'animal-dot';
+                animal.innerText = animalEmoji;
+                
+                // Keep them slightly random but generally aligned in a messy vertical structure
+                animal.style.left = (Math.random() * (areaW/2)) + (areaW/4) + 'px';
+                
+                // Align them slightly vertically for easiest matching
+                animal.style.top = (i * stepH) + (stepH/2) + 'px';
+                
+                area.appendChild(animal);
+            }
+        }
+
+        // --- Drag and Drop Logic ---
+
+        star.addEventListener('dragstart', (e) => {
+            // Needed for mobile safari support
+            if (e.dataTransfer) {
+                e.dataTransfer.setData('text/plain', e.target.id);
+            }
+        });
+
+        const targets = [cardA, cardB];
+        targets.forEach(target => {
+            target.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                target.classList.add('drop-active');
+            });
+
+            target.addEventListener('dragleave', (e) => {
+                target.classList.remove('drop-active');
+            });
+
+            target.addEventListener('drop', (e) => {
+                e.preventDefault();
+                target.classList.remove('drop-active');
+                
+                // Determine which group was chosen
+                const chosenGroup = (target.id === 'groupACard') ? 'A' : 'B';
+                handleComparison(chosenGroup);
+            });
+        });
+
+        function handleComparison(chosenGroup) {
+            let correct = false;
+            let feedbackMsg = '';
+            
+            // Standard NSO.1.4: Comparing countA to countB
+            if (countA > countB) {
+                if (chosenGroup === 'A') correct = true;
+                feedbackMsg = `<div class="scaffold">${countA} (A) <span>is GREATER THAN</span> <span class="scaffold-symbol">⬆️</span> ${countB} (B)</div>`;
+            } else if (countA < countB) {
+                if (chosenGroup === 'B') correct = true;
+                feedbackMsg = `<div class="scaffold">${countA} (A) <span>is LESS THAN</span> <span class="scaffold-symbol">⬇️</span> ${countB} (B)</div>`;
+            } else {
+                // equal. Correct choice is either, or we add special "Equal Target" later.
+                // For now, accept both drops.
+                correct = true; 
+                feedbackMsg = `<div class="scaffold">${countA} (A) <span>is EQUAL TO</span> <span class="scaffold-symbol">🤝</span> ${countB} (B)</div>`;
+            }
+
+            inst.innerText = (correct) ? "Great job! 🚀" : "Look again!";
+            
+            feedback.innerHTML = feedbackMsg;
+            feedback.style.display = 'block';
+            nextBtn.style.display = 'inline-block';
+
+            if (correct) {
+                star.style.opacity = '0.3';
+                star.draggable = false;
+            }
+        }
+
+        window.onload = initLevel;
+        window.onresize = initLevel;
+    </script>
+</body>
+</html>
