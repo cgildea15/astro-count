@@ -1,0 +1,14 @@
+/* High Contrast Mode - Force-activated via a button */
+.high-contrast {
+    background-color: black !important;
+    color: #ffff00 !important; /* High-vis Yellow */
+}
+
+.high-contrast .card-face {
+    background: black !important;
+    border: 5px solid #ffff00 !important;
+}
+
+.high-contrast .group-label {
+    color: #ffff00 !important;
+}
