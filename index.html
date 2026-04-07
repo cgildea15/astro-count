@@ -5,126 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ThresholdEd | Space Academy Comparison</title>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --space-blue: #0b1120;
-            --star-gold: #fbbf24;
-            --ui-blue: #60a5fa;
-            --success-green: #4ade80;
-            --error-orange: #f97316;
-        }
-
-        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
-        
-        body {
-            font-family: 'Lexend', sans-serif;
-            background-color: var(--space-blue);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 10px;
-            color: #e2e8f0;
-            overflow-x: hidden;
-        }
-
-        /* Accessibility: High Contrast / Focus Mode */
-        body.focus-mode {
-            background-color: #000 !important;
-        }
-        body.focus-mode .matching-area {
-            background-color: #111 !important;
-            border-color: #555 !important;
-        }
-
-        .accessibility-nav {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .space-header { font-size: clamp(1.8rem, 6vw, 2.5rem); margin-bottom: 5px; text-shadow: 0 0 10px var(--ui-blue); }
-
-        .instructions {
-            background: rgba(255, 255, 255, 0.95);
-            color: #1a202c;
-            padding: 15px 25px;
-            border-radius: 20px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: clamp(1rem, 4vw, 1.3rem);
-            width: 90%;
-            max-width: 700px;
-            border: 4px solid var(--ui-blue);
-            font-weight: 700;
-        }
-
-        .comparison-cards-container { display: flex; gap: 20px; width: 100%; max-width: 900px; margin-bottom: 20px; }
-        
-        @media (max-width: 768px) {
-            .comparison-cards-container { flex-direction: column; }
-        }
-
-        .card-face {
-            flex: 1; background: #ffffff; border-radius: 30px; border: 8px solid var(--ui-blue);
-            display: flex; flex-direction: column; align-items: center; padding: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .card-face.drop-active { border-color: var(--star-gold); background-color: #fffbeb; transform: scale(1.02); }
-
-        .group-label { font-size: 1.8rem; color: #1e3a8a; font-weight: 700; margin-bottom: 10px; }
-
-        .matching-area {
-            position: relative; width: 100%; height: 280px; background: #f1f5f9;
-            border-radius: 20px; border: 3px dashed #cbd5e1; overflow: hidden;
-        }
-
-        .animal-dot { font-size: 3.5rem; position: absolute; transition: transform 0.2s; cursor: default; }
-
-        .source-box { text-align: center; margin-top: 10px; }
-        
-        .draggable-star {
-            font-size: 5rem; cursor: grab; display: inline-block;
-            filter: drop-shadow(0 0 10px var(--star-gold));
-            transition: transform 0.2s;
-        }
-        .draggable-star:active { cursor: grabbing; transform: scale(1.2); }
-
-        .feedback-area {
-            background: rgba(255, 255, 255, 0.9); color: #1a202c; padding: 20px;
-            border-radius: 20px; text-align: center; max-width: 500px; width: 90%;
-            border: 5px solid var(--error-orange); font-size: 1.6rem; font-weight: 700;
-            margin-top: 20px; display: none;
-        }
-
-        .success-glow {
-            border-color: var(--success-green) !important;
-            animation: pulse-green 2s infinite;
-        }
-
-        @keyframes pulse-green {
-            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
-            70% { box-shadow: 0 0 0 20px rgba(74, 222, 128, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
-        }
-
-        .btn {
-            margin-top: 15px; padding: 18px 50px; font-size: 1.4rem; font-weight: 700;
-            background: #2563eb; color: white; border: none; border-radius: 25px;
-            cursor: pointer; box-shadow: 0 6px 0 #1d4ed8;
-        }
-        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #1d4ed8; }
-
-        .a11y-btn {
-            background: #334155; color: white; border: none; padding: 8px 15px;
-            border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 0.8rem;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -132,11 +13,11 @@
         <button class="a11y-btn" onclick="toggleFocusMode()" aria-label="Toggle Focus Mode">👁️ Focus Mode</button>
     </nav>
 
-    <header class="space-header" aria-hidden="true">🚀🦁🛸🌌</header>
+    <header class="space-header" aria-hidden="true">🚀🛸🌌🧑‍🚀</header>
 
     <main role="main" style="display:contents;">
         <div class="instructions" id="inst" aria-live="polite">
-            Count Group A and Group B. Which is GREATER?
+            Click a Lion, then click a Monkey to find a pair! 
         </div>
 
         <div class="comparison-cards-container">
@@ -152,7 +33,7 @@
         </div>
 
         <div class="source-box">
-            <p id="starHint">Drag the star to the biggest group:</p>
+            <p id="starHint">Finally, drag the star to the group with leftovers:</p>
             <div class="draggable-star" id="star" draggable="true" role="button" aria-describedby="starHint">🌟</div>
         </div>
 
@@ -160,124 +41,15 @@
         <button class="btn" id="nextBtn" style="display: none;" onclick="initLevel()">Next Mission 🚀</button>
     </main>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    <script type="module" src="firebase-config.js"></script>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDP9TrLurt53v4dFAdCc60h0Dszitbym3w",
-            authDomain: "sample-deals-app.firebaseapp.com",
-            projectId: "sample-deals-app",
-            storageBucket: "sample-deals-app.firebasestorage.app",
-            messagingSenderId: "926143400812",
-            appId: "1:926143400812:web:7aa6083d269e4298424149"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        window.saveMathProgress = async function(data) {
-            try {
-                await addDoc(collection(db, "math_sessions"), {
-                    ...data,
-                    timestamp: serverTimestamp(),
-                    userAgent: navigator.userAgent,
-                    locale: navigator.language // Internationalization Tracking
-                });
-                console.log("Telemetry Saved ✅");
-            } catch (e) {
-                console.error("Telemetry Error ❌", e);
-            }
-        };
-    </script>
-
+    <script type="module" src="script.js"></script>
+    
     <script>
-        const areaA = document.getElementById('areaA');
-        const areaB = document.getElementById('areaB');
-        const feedback = document.getElementById('feedback');
-        const nextBtn = document.getElementById('nextBtn');
-        const inst = document.getElementById('inst');
-        const star = document.getElementById('star');
-        const cardA = document.getElementById('groupACard');
-        const cardB = document.getElementById('groupBCard');
-
-        let countA, countB, attempts = 0;
-
+        // Simple toggle for the focus mode button
         function toggleFocusMode() {
             document.body.classList.toggle('focus-mode');
         }
-
-        function initLevel() {
-            attempts = 0;
-            areaA.innerHTML = ''; areaB.innerHTML = '';
-            feedback.style.display = 'none'; nextBtn.style.display = 'none';
-            feedback.classList.remove('success-glow');
-            inst.innerText = "Which group is GREATER?";
-            star.style.opacity = '1'; star.draggable = true;
-
-            countA = Math.floor(Math.random() * 10) + 1;
-            countB = Math.floor(Math.random() * 10) + 1;
-
-            // AAA: Set hidden text for screen readers
-            areaA.setAttribute('aria-label', `Group A has ${countA} animals`);
-            areaB.setAttribute('aria-label', `Group B has ${countB} animals`);
-
-            populateArea(areaA, countA, '🦁');
-            populateArea(areaB, countB, '🐵');
-        }
-
-        function populateArea(area, count, emoji) {
-            for (let i = 0; i < count; i++) {
-                const el = document.createElement('div');
-                el.className = 'animal-dot';
-                el.innerText = emoji;
-                el.style.left = Math.random() * 75 + 5 + '%';
-                el.style.top = Math.random() * 75 + 5 + '%';
-                area.appendChild(el);
-            }
-        }
-
-        star.addEventListener('dragstart', (e) => e.dataTransfer.setData('text', e.target.id));
-
-        [cardA, cardB].forEach(target => {
-            target.addEventListener('dragover', (e) => { e.preventDefault(); target.classList.add('drop-active'); });
-            target.addEventListener('dragleave', () => target.classList.remove('drop-active'));
-            target.addEventListener('drop', (e) => {
-                e.preventDefault();
-                target.classList.remove('drop-active');
-                checkAnswer(target.id === 'groupACard' ? 'A' : 'B');
-            });
-        });
-
-        function checkAnswer(chosen) {
-            attempts++;
-            let correct = false;
-            if (countA > countB && chosen === 'A') correct = true;
-            else if (countB > countA && chosen === 'B') correct = true;
-            else if (countA === countB) correct = true;
-
-            feedback.style.display = 'block';
-            if (correct) {
-                feedback.innerHTML = "Great Job, Space Cadet! 🌟";
-                feedback.classList.add('success-glow');
-                nextBtn.style.display = 'inline-block';
-                star.draggable = false;
-                star.style.opacity = '0.5';
-            } else {
-                feedback.innerHTML = "Not quite! Count again, you can do it!";
-            }
-
-            // Sync with Firebase
-            if (window.saveMathProgress) {
-                window.saveMathProgress({
-                    standard: "MA.K.NSO.1.4",
-                    isCorrect: correct,
-                    countA, countB, chosen, attempts
-                });
-            }
-        }
-
-        window.onload = initLevel;
     </script>
 </body>
 </html>
